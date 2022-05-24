@@ -38,7 +38,7 @@ IAM will be used to access control across services and resources of AWS
 
 ### Desired Architecture
 
-![DesiredTechAppChallengeArchitectureDiagram.drawio.drawio.png](DesiredTechAppChallengeArchitectureDiagram.drawio.drawio.png)
+![DesiredTechAppChallengeArchitectureDiagram.drawio.png](DesiredTechAppChallengeArchitectureDiagram.drawio.png)
 
 #### 1. Internet gateway - allow resources in VPC to access internet
 #### 2. NAT gateway - allow instances in a private subnet to connect to services outside VPC
@@ -46,7 +46,7 @@ IAM will be used to access control across services and resources of AWS
 #### 4. Private subnet - to deploy ECS Fargate and RDS Aurora Database
 
 ### Current Architecture for the scope of this challenge 
-![CurrentTechAppChallengeArchitectureDiagram.drawio.drawio.png](CurrentTechAppChallengeArchitectureDiagram.drawio.drawio.png)
+![CurrentTechAppChallengeArchitectureDiagram.drawio.png](CurrentTechAppChallengeArchitectureDiagram.drawio.png)
 
 ## 4. Pre-requisites
 
