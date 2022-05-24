@@ -1,7 +1,9 @@
+#ECS cluster
 resource "aws_ecs_cluster" "app" {
   name = "${var.prefix}-app"
 }
 
+#ECS service using Fargate
 resource "aws_ecs_service" "app" {
   name            = "app"
   cluster         = aws_ecs_cluster.app.id
@@ -22,6 +24,7 @@ resource "aws_ecs_service" "app" {
   }
 }
 
+#ECS task definition with container and database config
 resource "aws_ecs_task_definition" "app" {
   family                   = var.prefix
   requires_compatibilities = ["FARGATE"]
