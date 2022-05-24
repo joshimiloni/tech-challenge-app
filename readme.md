@@ -3,10 +3,8 @@
 ## 1. Tech challenge overview
 The scope of this challenge is to deploy a simple GTD application backed by a PostgreSQL database into a cloud environment of choice (AWS, Azure, or GCP).
 
-## 2. Solution approach and choice of technologies
+## 2. Solution approach and choice of technologies (AWS)
 
-### AWS 
-AWS will be used used as the cloud provider as it is one of the leading cloud platforms.
 
 ### ECS and Fargate
 ECS will be used for Docker container orchestration. While I have my expertise in Kubernetes, I will be exploring Fargate to understand more about its of ease of use.
@@ -26,7 +24,7 @@ ALB will be used for load balancing and auto-scaling.
 ### High Availability
 2 availability zones will be used under the same region. Keeping our resources in more than one zone is important to achieve high availability and to ensure your application is resilient to one zone failure
 #### Highly available frontend - Fargate Multi-AZ
-#### Auto scaling - Fargate using memory and cpu metrics
+#### Auto scaling - ECS Service Autoscaling. CloudWatch metrics CPU and Memory thresholds can also be used for auto scaling.
  
 ### Networking/Security (VPC and Subnets)
 1 VPC will be created with 1 subnet in each availability zone. Security Groups will be used to control traffic.
@@ -38,17 +36,17 @@ IAM will be used to access control across services and resources of AWS
 
 ## 3. High level architecture diagram
 
-### Current Architecture for the scope of this challenge 
-![CurrentTechChallengeAppArchitecture.drawio.png](CurrentTechChallengeAppArchitecture.drawio.png)
-
-
 ### Desired Architecture
+
+![DesiredTechAppChallengeArchitectureDiagram.drawio.drawio.png](DesiredTechAppChallengeArchitectureDiagram.drawio.drawio.png)
+
 #### 1. Internet gateway - allow resources in VPC to access internet
 #### 2. NAT gateway - allow instances in a private subnet to connect to services outside VPC
 #### 3. Public subnet - to deploy NAT gateway and ALB
 #### 4. Private subnet - to deploy ECS Fargate and RDS Aurora Database
 
-![DesiredTechChallengeAppArchitecture.drawio.png](DesiredTechChallengeAppArchitecture.drawio.png)
+### Current Architecture for the scope of this challenge 
+![CurrentTechAppChallengeArchitectureDiagram.drawio.drawio.png](CurrentTechAppChallengeArchitectureDiagram.drawio.drawio.png)
 
 ## 4. Pre-requisites
 
