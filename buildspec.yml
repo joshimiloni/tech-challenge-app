@@ -1,0 +1,24 @@
+version: 0.2
+
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 551590290388.dkr.ecr.us-east-1.amazonaws.com
+      - REPOSITORY_URI=551590290388.dkr.ecr.us-east-1.amazonaws.com/servian-tech-challenge
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images
+      - docker push $REPOSITORY_URI:latest
+      - echo Writing image definitions file
+      - printf '[{"name":"servian_tech_challenge_container","imageUri":"%s"}]' $REPOSITORY_URI:latest > imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json
