@@ -25,3 +25,4 @@ TechChallengeApp
 
 # Terraform
 .terraform*
+terraform.tfstate*
