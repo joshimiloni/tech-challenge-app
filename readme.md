@@ -1,33 +1,104 @@
 # Servian DevOps Tech Challenge - Tech Challenge App
 
-[![Build Status][circleci-badge]][circleci]
-[![Release][release-badge]][release]
-[![GoReportCard][report-badge]][report]
-[![License][license-badge]][license]
+## 1. Tech challenge overview
+The scope of this challenge is to deploy a simple GTD application backed by a PostgreSQL database into a cloud environment of choice (AWS, Azure, or GCP).
 
-[circleci-badge]: https://circleci.com/gh/servian/TechChallengeApp.svg?style=shield&circle-token=8dfd03c6c2a5dc5555e2f1a84c36e33bc58ad0aa
-[circleci]: https://circleci.com/gh/servian/TechChallengeApp
-[release-badge]: http://img.shields.io/github/release/servian/TechChallengeApp/all.svg?style=flat
-[release]:https://github.com/Servian/TechChallengeApp/releases
-[report-badge]: https://goreportcard.com/badge/github.com/Servian/TechChallengeApp
-[report]: https://goreportcard.com/report/github.com/Servian/TechChallengeApp
-[license-badge]: https://img.shields.io/github/license/Servian/TechChallengeApp.svg?style=flat
-[license]: https://github.com/Servian/TechChallengeApp/license
+## 2. Solution approach and choice of technologies (AWS)
 
-## Overview
 
-This is the Servian DevOps Tech challenge. It uses a simple application to help measure a candidate's technical capability and fit with Servian. The application itself is a simple GTD Golang application that is backed by a Postgres database.
+### ECS and Fargate
+ECS will be used for Docker container orchestration. While I have my expertise in Kubernetes, I will be exploring Fargate to understand more about its of ease of use.
 
-Servian provides the Tech Challenge to potential candidates, which focuses on deploying this application into a cloud environment of choice.
+### Terraform
+I will experiment with Terraform which provides Infrastructure as a Code. I have recently started exploring Terraform so this challenge will be a good opportunity for me to try  using it to create, manage and also destroy multiple AWS resources.
 
-More details about the application can be found in the [document folder](doc/readme.md)
+### RDS
+Aurora PostGresSQL will be used to provision the database in two availability zones to achieve high availability as primary and secondary. Aurora is generally preferred for commercial databases where high performance is desired. I have used RDS earlier so want to try using Aurora as part of this challege.
 
-## Taking the challenge
+### CodePipeline
+Codepipeline will be used for automated deployment with Continuous Integration and Continuous Delivery (CI/CD). GitHub will be used for the source code management and a push to master will trigger CodeBuild. 
 
-For more information about taking the challenge and joining Servians's amazing team, please head over to our [recruitment page](https://www.servian.com/careers/) and apply there. Our recruitment team will reach out to you about the details of the test and be able to answer any questions you have about Servian or the test itself.
+### Application Load Balancer (ALB)
+ALB will be used for load balancing and auto-scaling.
 
-Information about the assessment is available in the [assessment.md file](ASSESSMENT.md)
+### High Availability
+2 availability zones will be used under the same region. Keeping our resources in more than one zone is important to achieve high availability and to ensure your application is resilient to one zone failure
+#### Highly available frontend - Fargate Multi-AZ
+#### Auto scaling - ECS Service Autoscaling. CloudWatch metrics CPU and Memory thresholds can also be used for auto scaling.
+ 
+### Networking/Security (VPC and Subnets)
+1 VPC will be created with 1 subnet in each availability zone. Security Groups will be used to control traffic.
+#### Better security can be achieved using Desired Architecture shared below.
 
-## Found an issue?
+### AWS Identity and Access Management (IAM)
+IAM will be used to access control across services and resources of AWS
 
-If you've found an issue with the application, the documentation, or anything else, we are happy to take contributions. Please raise an issue in the [github repository](https://github.com/Servian/TechChallengeApp/issues) and read through the contribution rules found the [CONTRIBUTING.md](CONTRIBUTING.md) file for the details.
+
+## 3. High level architecture diagram
+
+### Desired Architecture
+
+![DesiredTechAppChallengeArchitectureDiagram.drawio.png](DesiredTechAppChallengeArchitectureDiagram.drawio.png)
+
+#### 1. Internet gateway - allow resources in VPC to access internet
+#### 2. NAT gateway - allow instances in a private subnet to connect to services outside VPC
+#### 3. Public subnet - to deploy NAT gateway and ALB
+#### 4. Private subnet - to deploy ECS Fargate and RDS Aurora Database
+
+### Current Architecture for the scope of this challenge 
+![CurrentTechAppChallengeArchitectureDiagram.drawio.png](CurrentTechAppChallengeArchitectureDiagram.drawio.png)
+
+## 4. Pre-requisites
+
+### Pre-requisites
+
+#### 1. Terraform installation 
+#### 2. AWS Account and AWS CLI (Basic IAM permissions for ECS, ECR, RDS, ALB etc)
+#### 3. Following inputs are required for executing the "terraform apply" command
+1. VPC_ID 
+While I have mostly used default VPC and subnets as part of my AWS learning journey, this time I tried to create my own VPC and subnets and provide them as inputs.
+AWS also has a great feature to create VPC and subnets together by providing count of AZ, public and private subnet 
+2. VPC_CIDR
+3. PostgreSQL database password
+
+## 5. Deployment steps
+
+###Automated deployment - Github Push action will trigger the Codepipeline (buildspec.yml)
+1. Code is pushed to master branch
+
+2. CodePipeline gets the code in the Source stage and calls the Build stage (CodeBuild).
+
+3. Build stage will process our Dockerfile and push the Image to ECR followed by triggering the Deploy stage
+
+4. Deploy stage updates our ECS with the new image
+
+
+### Manual deployment - Terraform installation is a pre-requisite. 
+
+#### terraform init
+Initialize terraform using this command
+
+#### terraform plan
+This command will help to understand the execution plan and which AWS resources will be deployed.
+
+#### terraform apply
+All AWS resources configured will be provisioned as part of this step
+
+#### terraform destroy
+All AWS resources created in previous steps can be destroyed using this command. It is a good practice to delete resources if not in use to avoid additional costs.
+
+## 5. Improvements/PROD readiness
+
+1. For the scope of this challenge as I was the only one using Terraform to manage AWS resource, terraform.tfstate local updates worked however while working within a team - AWS S3 should be used to maintain state of Terraform to avoid conflicts/data loss.
+
+2. Desired architecture can be used for bettery security and Route53 can be used to obtain domain name.
+
+3. Tests can be added to check success and failure of CodePipeline executions by using AWS Lambda integration.
+
+4. Checks can be added in Terraform AWS resource configs to prevent deletion based on certain conditions so that terraform destroy does not accidently delete resources.
+
+## 6. Alternatives
+
+1. GitHub actions is another widely used alternative to CodeBuild. 
+
+2. AWS CloudFormation can be used as an alternate to Terraform.
