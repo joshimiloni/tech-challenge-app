@@ -29,8 +29,8 @@ ALB will be used for load balancing and auto-scaling.
 #### Auto scaling - Fargate using memory and cpu metrics
  
 ### Networking/Security (VPC and Subnets)
-1 VPC will be created with 1 subnet in each availability zone. 
-#### Better security can be achieved using Desired Architecture in next point.
+1 VPC will be created with 1 subnet in each availability zone. Security Groups will be used to control traffic.
+#### Better security can be achieved using Desired Architecture shared below.
 
 ### AWS Identity and Access Management (IAM)
 IAM will be used to access control across services and resources of AWS
@@ -65,8 +65,8 @@ AWS also has a great feature to create VPC and subnets together by providing cou
 
 ## 5. Deployment steps
 
-###Automated deployment - Github Push action will trigger the Codepipeline
-1. Ccode is pushed to master branch
+###Automated deployment - Github Push action will trigger the Codepipeline (buildspec.yml)
+1. Code is pushed to master branch
 
 2. CodePipeline gets the code in the Source stage and calls the Build stage (CodeBuild).
 
@@ -89,13 +89,13 @@ All AWS resources configured will be provisioned as part of this step
 #### terraform destroy
 All AWS resources created in previous steps can be destroyed using this command. It is a good practice to delete resources if not in use to avoid additional costs.
 
-## 5. Improvements
+## 5. Improvements/PROD readiness
 
 1. For the scope of this challenge as I was the only one using Terraform to manage AWS resource, terraform.tfstate local updates worked however while working within a team - AWS S3 should be used to maintain state of Terraform to avoid conflicts/data loss.
 
-2. Tests can be added to check success and failure of CodePipeline executions by using AWS Lambda integration.
+2. Desired architecture can be used for bettery security and Route53 can be used to obtain domain name.
 
-3. 
+3. Tests can be added to check success and failure of CodePipeline executions by using AWS Lambda integration.
 
 4. Checks can be added in Terraform AWS resource configs to prevent deletion based on certain conditions so that terraform destroy does not accidently delete resources.
 
