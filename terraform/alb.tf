@@ -18,6 +18,11 @@ resource "aws_lb_target_group" "app" {
   health_check {
     path = "/healthcheck"
   }
+  
+   lifecycle {
+    create_before_destroy = true
+	ignore_changes = ["name"]
+  }
 }
 
 #ALB listener on 80
@@ -58,7 +63,7 @@ resource "aws_security_group" "lb_sg" {
       from_port        = 3000
       to_port          = 3000
       protocol         = "tcp"
-      cidr_blocks      = ["172.31.0.0/16"]
+      cidr_blocks      = ["${var.vpc_cidr}"]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []

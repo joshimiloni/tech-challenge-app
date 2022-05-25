@@ -9,7 +9,12 @@ variable "container_image" {
 }
 
 variable "vpc_id" {
-  description = "VPC to deploy application stack"
+  description = "VPC"
+  default = "arn:aws:secretsmanager:us-east-1:551590290388:secret:vpc_id-NqbvYt"
+}
+
+variable "vpc_cidr" {
+  description = "VPC CIDR"
 }
 
 variable "azs" {
@@ -32,6 +37,7 @@ variable "postgresql_version" {
 
 variable "postgresql_password" {
   description = "PostgreSQL database password"
+  default = "arn:aws:secretsmanager:us-east-1:551590290388:secret:postgresql_password-ssIHj5"
   sensitive   = true
 }
 
