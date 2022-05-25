@@ -20,7 +20,6 @@ resource "aws_ecs_service" "app" {
   network_configuration {
     subnets          = data.aws_subnets.available.ids
     security_groups  = [aws_security_group.app.id]
-    assign_public_ip = var.production ? false : true
   }
 }
 
@@ -40,7 +39,7 @@ resource "aws_ecs_task_definition" "app" {
       essential = true
       cpu       = 128
       memory    = 256
-      command   = ["serve"]
+      command   = ["./TechChallengeApp updatedb -s && ./TechChallengeApp serve"]
       logConfiguration = {
         logDriver = "awslogs"
         options = {

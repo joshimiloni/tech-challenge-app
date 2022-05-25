@@ -18,7 +18,6 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   instance_class     = var.postgresql_instance_class
   engine             = aws_rds_cluster.postgres.engine
   engine_version     = aws_rds_cluster.postgres.engine_version
-  # publicly_accessible = true
 }
 
 #Database security group
